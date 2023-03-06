@@ -10,6 +10,12 @@ const userInput = document.querySelector("#search-input");
 const searchBtn = document.querySelector("#search-button");
 let cities = history||[];
 
+historySection.addEventListener("click", function(event){
+  console.log(event.target.innerHTML)
+  userInput.value=event.target.innerHTML
+  searchBtn.dispatchEvent(new Event("click"));
+});
+
 // Add the history to local storage
 searchBtn.addEventListener("click", function (event) {
   event.preventDefault();
@@ -19,7 +25,12 @@ searchBtn.addEventListener("click", function (event) {
    if(cities.indexOf(cityName) === -1)  {
        cities.push(cityName); 
       localStorage.setItem("cities", JSON.stringify(cities)); 
+      var button = document.createElement("button");
+      button.className = "history-button";
+      button.innerHTML = cityName ;
+      historySection.appendChild(button);
    }
+
   const queryURL =
     "https://api.openweathermap.org/geo/1.0/direct?q=" +
     cityName +
@@ -44,6 +55,7 @@ searchBtn.addEventListener("click", function (event) {
       const cityData = response.data;
 
       //Call 5 day weather forecast API after we have city lat and lon value
+     document.querySelector("#fiveDayForecast").innerHTML = "";
 
       //Set variable called weatherList to search through the entire list:Array (40 items)
       const weatherList = cityData.list;
@@ -126,16 +138,18 @@ btnClearSearchHistory.addEventListener("click", function(event){
     localStorage.removeItem("cities"); 
 });
 
+
+
 window.addEventListener("load", function (event) {
   if (cities !== null) {
    btnClearSearchHistory.classList.remove("invisible")
   for (let i = 0; i < cities.length; i++) {
 
     var button = document.createElement("button");
-    button.className = "search-button";
+    button.className = "history-button";
     button.innerHTML = history[i];
     historySection.appendChild(button);
-    console.log(button);
   }
 }
 });
+
